@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "baseUrl": "src",
+    "declaration": true,
+    "sourceMap": true,
+    "sourceRoot": "../../",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "lib": ["es2015", "es2016", "es2017"],
+    "target": "ES2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "outDir": "dist",
+    "paths": {
+      "#/*": ["./*"],
+      "#lib/*": ["../lib/*"],
+      "#config/*": ["../config/*"],
+    },
+    "plugins": [{ "transform": "typescript-transform-paths" }],
+    "pretty": true,
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "rootDirs": ["src", "lib", "config"],
+    "strictNullChecks": true
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "require": ["typescript-transform-paths/register", "dotenv/config"]
+  },
+  "include": [
+    "src",
+    "lib",
+    "config"
+  ],
+  "exclude": ["node_modules", "dist", "eslint.config.mjs"]
+}
