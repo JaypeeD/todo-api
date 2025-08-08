@@ -38,5 +38,5 @@
     "lib",
     "config"
   ],
-  "exclude": ["node_modules", "dist", "eslint.config.mjs"]
+  "exclude": ["node_modules", "dist", ".eslintrc.js"]
 }

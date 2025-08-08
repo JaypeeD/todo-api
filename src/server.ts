@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
+import router from '#/routes';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,6 +14,7 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(router());
 
 // Routes
 app.get('/', (req: Request, res: Response) => {

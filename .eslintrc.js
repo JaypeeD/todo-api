@@ -7,7 +7,10 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'plugin:prettier/recommended',
   ],
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
@@ -19,5 +22,11 @@ module.exports = {
   env: {
     node: true,
     es6: true,
+  },
+  settings: {
+    'import/resolver': {
+      typescript: true,
+      node: true,
+    },
   },
 }; 
