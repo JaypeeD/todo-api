@@ -8,4 +8,8 @@ export default express
   .get(
     "/users/:userId/tasks/todo",
     TaskController.getUserTodoTasks.bind(TaskController),
+  )
+  .post(
+    "/users/:userId/tasks",
+    TaskController.createUserTask.bind(TaskController),
   );
