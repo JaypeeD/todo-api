@@ -6,10 +6,18 @@ export default express
   .Router()
   .get("/users/:userId/tasks", TaskController.getUserTasks.bind(TaskController))
   .get(
-    "/users/:userId/tasks/todo",
+    "/users/:userId/todo-tasks",
     TaskController.getUserTodoTasks.bind(TaskController),
   )
   .post(
     "/users/:userId/tasks",
     TaskController.createUserTask.bind(TaskController),
+  )
+  .put(
+    "/users/:userId/tasks/:taskId",
+    TaskController.updateUserTask.bind(TaskController),
+  )
+  .post(
+    "/users/:userId/todo-tasks",
+    TaskController.addUserTaskToTodoList.bind(TaskController),
   );
