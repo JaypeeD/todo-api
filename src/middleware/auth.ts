@@ -1,18 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    role?: string;
-  };
-}
+import { AuthRequest } from "#/types/AuthRequest";
 
 interface JWTPayload {
-  id: string;
+  id: number;
   email: string;
-  role?: string;
   iat: number;
   exp: number;
 }
@@ -21,7 +14,7 @@ interface JWTPayload {
  * Middleware to verify JWT token and extract user information
  */
 export const authenticate = (
-  req: AuthenticatedRequest,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): void => {
@@ -49,7 +42,6 @@ export const authenticate = (
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      role: decoded.role,
     };
 
     next();
