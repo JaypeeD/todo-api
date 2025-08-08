@@ -20,4 +20,8 @@ export default express
   .post(
     "/users/:userId/todo-tasks",
     TaskController.addUserTaskToTodoList.bind(TaskController),
+  )
+  .delete(
+    "/users/:userId/todo-tasks/:taskId",
+    TaskController.removeUserTaskFromTodoList.bind(TaskController),
   );

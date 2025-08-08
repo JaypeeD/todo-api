@@ -195,6 +195,58 @@ export default class TaskController {
         });
       }
 
+      // check if task belongs to user or is already in todo list
+      const task = await TaskRepository.getUserTask(userId, taskId);
+
+      if (!task) {
+        return res.status(404).json({
+          success: false,
+          error: "Not Found",
+          message: "Task not found.",
+        });
+      }
+
+      // check if task is already in todo list
+      const todoTask = await TaskRepository.getUserTodoTask(userId, taskId);
+
+      if (todoTask) {
+        return res.status(400).json({
+          success: false,
+          error: "Bad Request",
+          message: "Task is already in todo list.",
+        });
+      }
+
+      // add task to todo list
+      await TaskRepository.addUserTaskToTodoList(userId, taskId);
+
+      res.status(201).json({
+        success: true,
+        message: "Task added to todo list successfully.",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async removeUserTaskFromTodoList(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<any> {
+    try {
+      const { userId, taskId } = req.params;
+
+      // validate if userId is equal to token user id
+      if (Number(userId) !== req.user.id) {
+        return res.status(403).json({
+          success: false,
+          error: "Access denied",
+          message:
+            "You are not authorized to remove a task from someone else's todo list.",
+        });
+      }
+
       // check if task belongs to user
       const task = await TaskRepository.getUserTask(userId, taskId);
 
@@ -206,12 +258,12 @@ export default class TaskController {
         });
       }
 
-      // add task to todo list
-      await TaskRepository.addUserTaskToTodoList(userId, taskId);
+      // remove task from todo list
+      await TaskRepository.removeUserTaskFromTodoList(userId, taskId);
 
-      res.status(201).json({
+      res.status(200).json({
         success: true,
-        message: "Task added to todo list successfully.",
+        message: "Task removed from todo list successfully.",
       });
     } catch (error) {
       next(error);

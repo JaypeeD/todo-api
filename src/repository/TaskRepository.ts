@@ -32,6 +32,16 @@ export default class TaskRepository {
       .orderBy("tt.position", "asc");
   }
 
+  public static async getUserTodoTask(
+    userId: string,
+    taskId: string,
+  ): Promise<Task | undefined> {
+    return knex("todo_tasks as tt")
+      .where("tt.user_id", userId)
+      .where("tt.task_id", taskId)
+      .first();
+  }
+
   public static async createUserTask(
     userId: string,
     title: string,
@@ -49,10 +59,10 @@ export default class TaskRepository {
     taskId: string,
   ): Promise<void> {
     const position = await knex("todo_tasks")
-      .max("position")
+      .max("position as position")
       .where("user_id", userId)
       .first()
-      .then((result) => result?.max || 0);
+      .then((result) => result?.position || 0);
 
     const newPosition = position + 1;
 
@@ -72,5 +82,15 @@ export default class TaskRepository {
       .where("user_id", userId)
       .where("id", taskId)
       .update(updateData);
+  }
+
+  public static async removeUserTaskFromTodoList(
+    userId: string,
+    taskId: string,
+  ): Promise<void> {
+    await knex("todo_tasks")
+      .where("user_id", userId)
+      .where("task_id", taskId)
+      .delete();
   }
 }
