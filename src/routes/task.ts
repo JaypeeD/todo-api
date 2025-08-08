@@ -4,7 +4,8 @@ import TaskController from "#/controller/TaskController";
 
 export default express
   .Router()
+  .get("/users/:userId/tasks", TaskController.getUserTasks.bind(TaskController))
   .get(
-    "/users/:userId/tasks",
-    TaskController.getUserTasks.bind(TaskController),
+    "/users/:userId/tasks/todo",
+    TaskController.getUserTodoTasks.bind(TaskController),
   );

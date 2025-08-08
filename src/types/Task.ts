@@ -5,3 +5,7 @@ export interface Task {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface TodoTask extends Task {
+  position: number;
+}
