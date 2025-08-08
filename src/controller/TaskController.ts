@@ -19,8 +19,8 @@ export default class TaskController {
       if (Number(userId) !== req.user.id) {
         return res.status(403).json({
           success: false,
-          error:
-            "Access denied. You are not authorized to view someone else's tasks.",
+          error: "Access denied",
+          message: "You are not authorized to view someone else's tasks.",
         });
       }
       // fetch user tasks

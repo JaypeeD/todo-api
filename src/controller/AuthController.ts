@@ -51,27 +51,33 @@ export default class AuthController {
       const { username, password } = req.body;
 
       if (!username || !password) {
-        return res
-          .status(400)
-          .json({ message: "Username and password are required" });
+        return res.status(400).json({
+          success: false,
+          error: "Bad Request",
+          message: "Username and password are required.",
+        });
       }
 
       // check if user exists
       const user = await UserRepository.getUserByUsername(username);
 
       if (!user) {
-        return res
-          .status(401)
-          .json({ message: "Invalid username or password" });
+        return res.status(401).json({
+          success: false,
+          error: "Unauthorized",
+          message: "Invalid username or password.",
+        });
       }
 
       // check if password match
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        return res
-          .status(401)
-          .json({ message: "Invalid username or password" });
+        return res.status(401).json({
+          success: false,
+          error: "Unauthorized",
+          message: "Invalid username or password.",
+        });
       }
 
       // generate token
