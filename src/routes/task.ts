@@ -24,4 +24,8 @@ export default express
   .delete(
     "/users/:userId/todo-tasks/:taskId",
     TaskController.removeUserTaskFromTodoList.bind(TaskController),
+  )
+  .put(
+    "/users/:userId/todo-tasks/reorder",
+    TaskController.reorderUserTodoTasks.bind(TaskController),
   );

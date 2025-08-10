@@ -4,7 +4,7 @@
 import { Response, NextFunction } from "express";
 
 import { AuthRequest } from "#/types/AuthRequest";
-import TaskRepository from "#/repository/TaskRepository";
+import TaskService from "#/service/TaskService";
 
 export default class TaskController {
   public static async getUserTasks(
@@ -24,7 +24,7 @@ export default class TaskController {
         });
       }
       // fetch user tasks
-      const tasks = await TaskRepository.getUserTasks(userId);
+      const tasks = await TaskService.getUserTasks(userId);
 
       res.status(200).json({
         success: true,
@@ -53,7 +53,7 @@ export default class TaskController {
       }
 
       // fetch user todo tasks
-      const todoTasks = await TaskRepository.getUserTodoTasks(userId);
+      const todoTasks = await TaskService.getUserTodoTasksDetails(userId);
 
       res.status(200).json({
         success: true,
@@ -93,7 +93,7 @@ export default class TaskController {
       }
 
       // create task
-      await TaskRepository.createUserTask(userId, title, description);
+      await TaskService.createUserTask(userId, title, description);
 
       res.status(201).json({
         success: true,
@@ -122,7 +122,7 @@ export default class TaskController {
       }
 
       // check if task belongs to user
-      const task = await TaskRepository.getUserTask(userId, taskId);
+      const task = await TaskService.getUserTask(userId, taskId);
 
       if (!task) {
         return res.status(404).json({
@@ -155,7 +155,7 @@ export default class TaskController {
       }
 
       // update task
-      await TaskRepository.updateUserTask(userId, taskId, updateData);
+      await TaskService.updateUserTask(userId, taskId, updateData);
 
       res.status(200).json({
         success: true,
@@ -184,7 +184,7 @@ export default class TaskController {
         });
       }
 
-      const { taskId } = req.body;
+      const { taskId, beforeTaskId } = req.body;
 
       // validate if taskId is required
       if (!taskId) {
@@ -196,7 +196,7 @@ export default class TaskController {
       }
 
       // check if task belongs to user or is already in todo list
-      const task = await TaskRepository.getUserTask(userId, taskId);
+      const task = await TaskService.getUserTask(userId, taskId);
 
       if (!task) {
         return res.status(404).json({
@@ -207,7 +207,7 @@ export default class TaskController {
       }
 
       // check if task is already in todo list
-      const todoTask = await TaskRepository.getUserTodoTask(userId, taskId);
+      const todoTask = await TaskService.getUserTodoTask(userId, taskId);
 
       if (todoTask) {
         return res.status(400).json({
@@ -216,9 +216,12 @@ export default class TaskController {
           message: "Task is already in todo list.",
         });
       }
-
       // add task to todo list
-      await TaskRepository.addUserTaskToTodoList(userId, taskId);
+      await TaskService.addUserTaskToTodoList(
+        userId,
+        taskId,
+        beforeTaskId || null,
+      );
 
       res.status(201).json({
         success: true,
@@ -248,7 +251,7 @@ export default class TaskController {
       }
 
       // check if task belongs to user
-      const task = await TaskRepository.getUserTask(userId, taskId);
+      const task = await TaskService.getUserTask(userId, taskId);
 
       if (!task) {
         return res.status(404).json({
@@ -258,12 +261,92 @@ export default class TaskController {
         });
       }
 
+      // check if task is in todo list
+      const todoTask = await TaskService.getUserTodoTask(userId, taskId);
+      if (!todoTask) {
+        return res.status(404).json({
+          success: false,
+          error: "Not Found",
+          message: "Task is not in todo list.",
+        });
+      }
+
       // remove task from todo list
-      await TaskRepository.removeUserTaskFromTodoList(userId, taskId);
+      await TaskService.removeUserTaskFromTodoList(userId, taskId);
 
       res.status(200).json({
         success: true,
         message: "Task removed from todo list successfully.",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async reorderUserTodoTasks(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<any> {
+    try {
+      const { userId } = req.params;
+
+      // validate if userId is equal to token user id
+      if (Number(userId) !== req.user.id) {
+        return res.status(403).json({
+          success: false,
+          error: "Access denied",
+          message:
+            "You are not authorized to reorder someone else's todo tasks.",
+        });
+      }
+
+      // taskId = task to be moved
+      // beforeTaskId = the task before which the task will be moved (optional, null means move to end)
+      const { taskId, beforeTaskId } = req.body;
+
+      if (!taskId) {
+        return res.status(400).json({
+          success: false,
+          error: "Bad Request",
+          message: "Task ID is required.",
+        });
+      }
+
+      // check if task belongs to user
+      const task = await TaskService.getUserTask(userId, taskId);
+
+      if (!task) {
+        return res.status(404).json({
+          success: false,
+          error: "Not Found",
+          message: "Task not found.",
+        });
+      }
+
+      // check if beforeTaskId belongs to user (only if beforeTaskId is provided)
+      if (beforeTaskId) {
+        const beforeTask = await TaskService.getUserTask(userId, beforeTaskId);
+
+        if (!beforeTask) {
+          return res.status(404).json({
+            success: false,
+            error: "Not Found",
+            message: "Before task not found.",
+          });
+        }
+      }
+
+      // reorder todo tasks
+      await TaskService.reorderUserTodoTasks(
+        userId,
+        taskId,
+        beforeTaskId || null,
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Todo tasks reordered successfully.",
       });
     } catch (error) {
       next(error);

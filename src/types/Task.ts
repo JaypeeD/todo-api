@@ -4,8 +4,10 @@ export interface Task {
   description: string;
   createdAt: Date;
   updatedAt: Date;
+  position?: number;
 }
 
-export interface TodoTask extends Task {
+export interface TodoTask {
+  taskId: number;
   position: number;
 }

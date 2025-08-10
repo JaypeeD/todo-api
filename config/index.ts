@@ -14,6 +14,8 @@ export default fromJS({
   MYSQL_USER: process.env.MYSQL_USER || "",
   MYSQL_PASSWORD: process.env.MYSQL_PASSWORD || "",
   MYSQL_PORT: parseInt(process.env.MYSQL_PORT || "3306", 10),
+
+  TASK_POSITION_GAP: parseInt(process.env.TASK_POSITION_GAP || "10", 10)
   
 });
 
