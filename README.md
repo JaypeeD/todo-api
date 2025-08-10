@@ -58,6 +58,7 @@ npm run dev
 ## Environment Variables
 
 - `JWT_SECRET` - Secret key for JWT tokens
+- `JWT_EXPIRES_IN` - JWT token expiration time
 - `MYSQL_HOST` - MySQL host
 - `MYSQL_DATABASE` - Database name
 - `MYSQL_USER` - Database username
